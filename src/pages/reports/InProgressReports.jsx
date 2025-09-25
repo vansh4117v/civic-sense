@@ -49,7 +49,7 @@ const InProgressReports = () => {
       !searchTerm ||
       report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.id.toLowerCase().includes(searchTerm.toLowerCase());
+      report.id.toString().toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesDepartment =
       selectedDepartment === "all" || report.department === selectedDepartment;
@@ -407,7 +407,7 @@ const InProgressReports = () => {
                       {report.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-2 py-4">
                     <div className="flex space-x-1.5">
                       <Button
                         variant="outline"

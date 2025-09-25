@@ -84,7 +84,7 @@ const ResolvedReports = () => {
   const filteredReports = reports.filter((report) => {
     const matchesSearch =
       report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
       (report.description && report.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (report.resolutionSummary &&
         report.resolutionSummary.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -408,14 +408,16 @@ const ResolvedReports = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {report.id}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {report.title}
+                    <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                      <div className="truncate" title={report.title}>
+                        {report.title}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {report.dateSubmitted}
+                      {formatDate(report.dateSubmitted)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {report.dateResolved}
+                      {formatDate(report.dateResolved)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span

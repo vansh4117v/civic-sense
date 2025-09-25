@@ -1,6 +1,52 @@
+// Helper function to validate token (basic JWT validation)
+const isTokenValid = (token) => {
+  if (!token) return false;
+  
+  try {
+    // Split JWT token to get payload
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+    
+    // Check if token is expired
+    return payload.exp && payload.exp > currentTime;
+  } catch {
+    // If token is malformed, consider it invalid
+    return false;
+  }
+};
+
+// Helper function to get valid token with priority handling
+const getValidToken = () => {
+  const sessionToken = sessionStorage.getItem("civicflow_token");
+  const localToken = localStorage.getItem("civicflow_token");
+  
+  // Priority 1: Valid session token (current session takes precedence)
+  if (sessionToken && isTokenValid(sessionToken)) {
+    return sessionToken;
+  }
+  
+  // Priority 2: Valid local token (persistent login)
+  if (localToken && isTokenValid(localToken)) {
+    return localToken;
+  }
+  
+  // If no valid tokens, clean up invalid ones
+  if (sessionToken && !isTokenValid(sessionToken)) {
+    sessionStorage.removeItem("civicflow_token");
+    sessionStorage.removeItem("civicflow_user");
+  }
+  
+  if (localToken && !isTokenValid(localToken)) {
+    localStorage.removeItem("civicflow_token");
+    localStorage.removeItem("civicflow_user");
+  }
+  
+  return null;
+};
+
 // API helper function
 const apiCall = async (endpoint, options = {}) => {
-  const token = localStorage.getItem("civicflow_token");
+  const token = getValidToken();
   const response = await fetch(`https://civic-issue-backend-oju3.onrender.com${endpoint}`, {
     headers: {
       "Content-Type": "application/json",
@@ -11,8 +57,11 @@ const apiCall = async (endpoint, options = {}) => {
   });
 
   if (response.status === 401) {
+    // Clear both storages on unauthorized
     localStorage.removeItem("civicflow_token");
     localStorage.removeItem("civicflow_user");
+    sessionStorage.removeItem("civicflow_token");
+    sessionStorage.removeItem("civicflow_user");
     window.location.href = "/login";
     return;
   }
@@ -186,7 +235,7 @@ const mockData = {
 
 // ============ AUTHENTICATION FUNCTIONS ============
 
-export const login = async (phoneNumber, password) => {
+export const login = async (phoneNumber, password, rememberMe = false) => {
   try {
     const response = await fetch(`https://civic-issue-backend-oju3.onrender.com/auth/admin-login`, {
       method: "POST",
@@ -210,8 +259,16 @@ export const login = async (phoneNumber, password) => {
     // Map backend user data to frontend format
     const mappedUser = mapBackendUser(user);
 
-    localStorage.setItem("civicflow_token", token);
-    localStorage.setItem("civicflow_user", JSON.stringify(mappedUser));
+    // ALWAYS clear all existing tokens first to prevent conflicts
+    localStorage.removeItem("civicflow_token");
+    localStorage.removeItem("civicflow_user");
+    sessionStorage.removeItem("civicflow_token");
+    sessionStorage.removeItem("civicflow_user");
+
+    // Store credentials based on rememberMe preference
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem("civicflow_token", token);
+    storage.setItem("civicflow_user", JSON.stringify(mappedUser));
 
     return { user: mappedUser, token };
   } catch (error) {
@@ -226,23 +283,37 @@ export const logout = async () => {
   } catch (error) {
     console.error("Logout error:", error);
   } finally {
+    // Clear both localStorage and sessionStorage
     localStorage.removeItem("civicflow_user");
     localStorage.removeItem("civicflow_token");
+    sessionStorage.removeItem("civicflow_user");
+    sessionStorage.removeItem("civicflow_token");
   }
 };
 
 export const getCurrentUser = () => {
-  const userStr = localStorage.getItem("civicflow_user");
-  const token = localStorage.getItem("civicflow_token");
-
-  if (userStr && token) {
-    return JSON.parse(userStr);
+  const validToken = getValidToken();
+  if (!validToken) return null;
+  
+  // Get user data from the same storage that has the valid token
+  const sessionUser = sessionStorage.getItem("civicflow_user");
+  const localUser = localStorage.getItem("civicflow_user");
+  
+  // Check session storage first (current session priority)
+  if (sessionStorage.getItem("civicflow_token") === validToken && sessionUser) {
+    return JSON.parse(sessionUser);
   }
+  
+  // Check local storage
+  if (localStorage.getItem("civicflow_token") === validToken && localUser) {
+    return JSON.parse(localUser);
+  }
+  
   return null;
 };
 
 export const isAuthenticated = () => {
-  return localStorage.getItem("civicflow_token") !== null;
+  return !!getValidToken();
 };
 
 // ============ DASHBOARD FUNCTIONS ============
@@ -693,7 +764,7 @@ export const exportReportData = async (reportId, format = "pdf") => {
 
     // Step 2: Create download link and trigger automatic download
     const downloadUrl = `https://civic-issue-backend-oju3.onrender.com${exportResponse.downloadUrl}`;
-    const token = localStorage.getItem("civicflow_token");
+    const token = getValidToken();
     
     // Create a temporary link element to trigger download
     const link = document.createElement('a');

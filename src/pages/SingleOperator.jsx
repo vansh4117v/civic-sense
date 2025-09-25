@@ -186,7 +186,7 @@ const SingleOperatorPage = () => {
       !searchTerm ||
       report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.id.toLowerCase().includes(searchTerm.toLowerCase());
+      report.id.toString().toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesPriority =
       selectedPriority === "all" ||

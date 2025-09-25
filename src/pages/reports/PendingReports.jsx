@@ -25,6 +25,7 @@ import {
   DialogTitle,
 } from "../../components/ui/dialog";
 import ReportDetailsModal from "../../components/reports/ReportDetailsModal";
+import { formatDate, formatDateTime } from "../../utils/date";
 
 const PendingReports = () => {
   const { user } = useAuth();
@@ -84,9 +85,10 @@ const PendingReports = () => {
   };
 
   const filteredReports = reports.filter((report) => {
+    console.log("🚀 ~ PendingReports ~ report:", report)
     const matchesSearch =
       report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
       (report.description && report.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesDepartment =
@@ -301,7 +303,7 @@ const PendingReports = () => {
                           Submitted Date
                         </p>
                         <p className="text-sm font-semibold text-gray-900 mt-1">
-                          {report.dateSubmitted}
+                          {formatDateTime(report.dateSubmitted)}
                         </p>
                       </div>
 
@@ -377,7 +379,7 @@ const PendingReports = () => {
                   Title
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
+                  	Date Reported
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Priority
@@ -404,11 +406,13 @@ const PendingReports = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {report.id}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {report.title}
+                    <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                      <div className="truncate" title={report.title}>
+                        {report.title}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {report.dateSubmitted}
+                      {formatDate(report.dateSubmitted)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
@@ -439,7 +443,7 @@ const PendingReports = () => {
                         )}
                       </td>
                     )}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div className="flex space-x-2">
                         {user?.role === "departmentHead" && !report.assignedTo && (
                           <Button
@@ -451,7 +455,7 @@ const PendingReports = () => {
                             {loadingReports.assign === report.id ? "Loading..." : "Assign"}
                           </Button>
                         )}
-                        {report.assignedTo && (
+                        {report.assignedTo && user?.role === "departmentHead" &&  (
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             ✓ Assigned to {report.assignedTo}
                           </span>
@@ -461,6 +465,8 @@ const PendingReports = () => {
                           size="sm"
                           onClick={() => handleViewClick(report)}
                           disabled={loadingReports.details === report.id}
+                          className="text-xs px-2.5 py-1.5 h-7 whitespace-nowrap"
+
                         >
                           {loadingReports.details === report.id ? "Loading..." : "View Details"}
                         </Button>
@@ -469,6 +475,8 @@ const PendingReports = () => {
                           size="sm"
                           onClick={() => handleUpdateStatusClick(report)}
                           disabled={loadingReports.updateStatus === report.id}
+                          className="text-xs px-2.5 py-1.5 h-7 whitespace-nowrap"
+
                         >
                           {loadingReports.updateStatus === report.id
                             ? "Updating..."

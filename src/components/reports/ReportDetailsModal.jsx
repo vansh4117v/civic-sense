@@ -165,7 +165,9 @@ const ReportDetailsModal = ({ open, onOpenChange, report }) => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Due Date</p>
-                    <p className="font-medium text-gray-900">{formatDate(report.dueDate || report.estimatedResolution)}</p>
+                    <p className="font-medium text-gray-900">
+                      {formatDate(report.dueDate || report.estimatedResolution)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -186,9 +188,9 @@ const ReportDetailsModal = ({ open, onOpenChange, report }) => {
                   <div>
                     <p className="text-sm text-gray-500">Coordinates</p>
                     <p className="font-medium text-gray-900 font-mono text-sm">
-                      {(report.coordinates?.lat && report.coordinates?.lng)
+                      {report.coordinates?.lat && report.coordinates?.lng
                         ? `${report.coordinates.lat}, ${report.coordinates.lng}`
-                        : (report.latitude && report.longitude)
+                        : report.latitude && report.longitude
                         ? `${report.latitude}, ${report.longitude}`
                         : "N/A"}
                     </p>
@@ -206,7 +208,10 @@ const ReportDetailsModal = ({ open, onOpenChange, report }) => {
                   <div>
                     <p className="text-sm text-gray-500">Department</p>
                     <p className="font-medium text-gray-900">
-                      {report.department || report.assignedToDepartment || report.departmentName || "Not assigned"}
+                      {report.department ||
+                        report.assignedToDepartment ||
+                        report.departmentName ||
+                        "Not assigned"}
                     </p>
                   </div>
                   {report.assignedTo && (
@@ -227,7 +232,10 @@ const ReportDetailsModal = ({ open, onOpenChange, report }) => {
                   </div>
                   <div className="space-y-3">
                     {report.timeline.map((event, index) => (
-                      <div key={index} className="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-b-0 last:pb-0">
+                      <div
+                        key={index}
+                        className="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-b-0 last:pb-0"
+                      >
                         <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                         <div className="flex-1">
                           <p className="font-medium text-gray-900 text-sm">{event.action}</p>
@@ -249,19 +257,25 @@ const ReportDetailsModal = ({ open, onOpenChange, report }) => {
             </div>
 
             {/* Media Attachments */}
-            {((report.attachments && report.attachments.length > 0) || report.photoUrl || report.voiceUrl) && (
+            {((report.attachments && report.attachments.length > 0) ||
+              report.photoUrl ||
+              report.voiceUrl) && (
               <div>
                 <h3 className="font-semibold text-gray-900 mb-4">Attachments</h3>
                 <div className="grid grid-cols-1 gap-4">
                   {/* Handle new attachments array format */}
-                  {report.attachments && report.attachments.length > 0 && 
+                  {report.attachments &&
+                    report.attachments.length > 0 &&
                     report.attachments.map((attachment, index) => {
-                      if (attachment.type === 'image') {
+                      if (attachment.type === "image") {
                         return (
-                          <div key={attachment.id || index} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                          <div
+                            key={attachment.id || index}
+                            className="bg-white border border-gray-200 rounded-xl overflow-hidden"
+                          >
                             <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
                               <h5 className="text-sm font-medium text-gray-900">
-                                {attachment.name || 'Photo Evidence'}
+                                {attachment.name || "Photo Evidence"}
                               </h5>
                             </div>
                             <div className="p-4">
@@ -280,12 +294,15 @@ const ReportDetailsModal = ({ open, onOpenChange, report }) => {
                             </div>
                           </div>
                         );
-                      } else if (attachment.type === 'audio') {
+                      } else if (attachment.type === "audio") {
                         return (
-                          <div key={attachment.id || index} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                          <div
+                            key={attachment.id || index}
+                            className="bg-white border border-gray-200 rounded-xl overflow-hidden"
+                          >
                             <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
                               <h5 className="text-sm font-medium text-gray-900">
-                                {attachment.name || 'Voice Recording'}
+                                {attachment.name || "Voice Recording"}
                               </h5>
                             </div>
                             <div className="p-4">
@@ -299,9 +316,8 @@ const ReportDetailsModal = ({ open, onOpenChange, report }) => {
                         );
                       }
                       return null;
-                    })
-                  }
-                  
+                    })}
+
                   {/* Fallback to old format for backward compatibility */}
                   {(!report.attachments || report.attachments.length === 0) && report.photoUrl && (
                     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">

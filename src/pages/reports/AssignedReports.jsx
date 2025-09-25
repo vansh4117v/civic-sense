@@ -58,7 +58,7 @@ const AssignedReports = () => {
     const matchesSearch =
       !searchTerm ||
       report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
       (report.description && report.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesPriority = selectedPriority === "all" || report.priority === selectedPriority;

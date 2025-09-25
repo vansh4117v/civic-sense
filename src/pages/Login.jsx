@@ -42,7 +42,7 @@ export default function LoginForm() {
     setError("");
 
     try {
-      await login(data.phoneNumber, data.password);
+      await login(data.phoneNumber, data.password, data.rememberMe);
       navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
@@ -58,7 +58,6 @@ export default function LoginForm() {
       {/* Logo and Brand */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-6">
-          <Sparkles className="h-10 w-10 text-green-600" />
           <h1 className="text-4xl font-bold">
             <span className="text-green-800">Civic</span>
             <span className="text-green-600">Sense</span>

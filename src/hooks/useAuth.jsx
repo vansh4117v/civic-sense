@@ -29,8 +29,8 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
-  const login = async (phoneNumber, password) => {
-    const response = await apiLogin(phoneNumber, password);
+  const login = async (phoneNumber, password, rememberMe = false) => {
+    const response = await apiLogin(phoneNumber, password, rememberMe);
     setUser(response.user);
     setIsAuthenticated(true);
     return response;
