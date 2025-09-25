@@ -1,0 +1,31 @@
+/* Global styles specific to the app */
+body {
+  min-height: 100vh;
+}
+
+/* Custom scrollbar for sidebar and content */
+.sidebar-scrollbar, .content-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground)) hsl(var(--muted));
+}
+
+.sidebar-scrollbar::-webkit-scrollbar,
+.content-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track,
+.content-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb,
+.content-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground));
+  border-radius: 4px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover,
+.content-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--foreground));
+}
