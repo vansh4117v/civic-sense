@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Users, Plus } from "lucide-react";
+import { toast } from "sonner";
 import { getDepartments, createDepartment } from "../services/api";
 import { Button } from "../components/ui/button";
 import {
@@ -54,7 +55,7 @@ const DepartmentsPage = () => {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      alert("Department name is required");
+      toast.warning("Department name is required");
       return;
     }
 
@@ -64,10 +65,10 @@ const DepartmentsPage = () => {
       setDepartments((prev) => [...prev, newDepartment]);
       setShowAddModal(false);
       resetForm();
-      alert("Department created successfully!");
+      toast.success("Department created successfully!");
     } catch (error) {
       console.error("Error creating department:", error);
-      alert("Failed to create department. Please try again.");
+      toast.error("Failed to create department. Please try again.");
     } finally {
       setIsCreating(false);
     }

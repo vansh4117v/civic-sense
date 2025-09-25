@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Search, ArrowLeft, Mail, Phone, MapPin, Users } from "lucide-react";
+import { toast } from "sonner";
 import {
   getDepartmentById,
   getDepartmentReports,
@@ -62,7 +63,7 @@ const SingleDepartmentPage = () => {
 
         setReportsLoading(true);
         const reportsData = await getDepartmentReports(departmentId);
-        console.log("🚀 ~ fetchData ~ reportsData:", reportsData)
+        console.log("🚀 ~ fetchData ~ reportsData:", reportsData);
         setReports(reportsData);
       } catch (error) {
         console.error("Error fetching department data:", error);
@@ -98,7 +99,7 @@ const SingleDepartmentPage = () => {
       await exportReportData(report.id, "pdf");
     } catch (error) {
       console.error("Error exporting report:", error);
-      alert("Failed to export report");
+      toast.error("Failed to export report");
     } finally {
       setLoadingReports((prev) => ({ ...prev, export: null }));
     }
@@ -129,7 +130,7 @@ const SingleDepartmentPage = () => {
       setSelectedNewStatus("");
     } catch (error) {
       console.error("Error updating report status:", error);
-      alert("Failed to update report status");
+      toast.error("Failed to update report status");
     } finally {
       setLoadingReports((prev) => ({ ...prev, updateStatus: null }));
     }

@@ -2,6 +2,7 @@ import React from "react";
 import { LogOut, User, Menu } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../ui/button";
+import { Link } from "react-router-dom";
 
 const TopNavbar = ({ setSidebarOpen }) => {
   const { logout } = useAuth();
@@ -44,7 +45,9 @@ const TopNavbar = ({ setSidebarOpen }) => {
 
           <div className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-full bg-gray-800 flex items-center justify-center">
-              <User className="h-4 w-4 text-white" />
+              <Link to="/settings">
+                <User className="h-4 w-4 text-white" />
+              </Link>
             </div>
           </div>
         </div>

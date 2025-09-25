@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../components/ui/dialog";
+import { toast } from "sonner";
 import ReportDetailsModal from "../../components/reports/ReportDetailsModal";
 
 const AssignedReports = () => {
@@ -80,14 +81,14 @@ const AssignedReports = () => {
 
   const handleUpdateStatusSubmit = async () => {
     if (!selectedNewStatus || !selectedReport) {
-      alert("Please select a status");
+      toast.warning("Please select a status");
       return;
     }
 
     setLoadingReports((prev) => ({ ...prev, updateStatus: selectedReport.id }));
     try {
       await updateReportStatus(selectedReport.id, selectedNewStatus);
-      alert(`Report ${selectedReport.id} status updated to ${selectedNewStatus}`);
+      toast.success(`Report ${selectedReport.id} status updated to ${selectedNewStatus}`);
 
       // Refresh the reports list
       await fetchReports();
@@ -96,7 +97,7 @@ const AssignedReports = () => {
       setShowUpdateStatusModal(false);
     } catch (error) {
       console.error("Error updating report status:", error);
-      alert("Failed to update report status");
+      toast.error("Failed to update report status");
     } finally {
       setLoadingReports((prev) => ({ ...prev, updateStatus: null }));
     }

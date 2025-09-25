@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import {
   getDashboardStats,
   getDashboardChartData,
@@ -136,7 +137,7 @@ const DashboardPage = () => {
       setShowDetailsModal(true);
     } catch (error) {
       console.error("Failed to load report details:", error);
-      alert("Failed to load report details");
+      toast.error("Failed to load report details");
     } finally {
       setLoadingReports((prev) => ({ ...prev, details: null }));
     }
@@ -148,7 +149,7 @@ const DashboardPage = () => {
       await exportReportData(report.id, "pdf");
     } catch (error) {
       console.error("Error exporting report:", error);
-      alert("Failed to export report");
+      toast.error("Failed to export report");
     } finally {
       setLoadingReports((prev) => ({ ...prev, export: null }));
     }
@@ -179,7 +180,7 @@ const DashboardPage = () => {
       setSelectedNewStatus("");
     } catch (error) {
       console.error("Error updating report status:", error);
-      alert("Failed to update report status");
+      toast.error("Failed to update report status");
     } finally {
       setLoadingReports((prev) => ({ ...prev, updateStatus: null }));
     }

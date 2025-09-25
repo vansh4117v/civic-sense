@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Search, ArrowLeft, Mail, Phone, MapPin, Users, Calendar, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 import {
   getOperatorById,
   getOperatorReports,
@@ -85,7 +86,7 @@ const SingleOperatorPage = () => {
       await exportReportData(report.id, "pdf");
     } catch (error) {
       console.error("Error exporting report:", error);
-      alert("Failed to export report");
+      toast.error("Failed to export report");
     } finally {
       setLoadingReports((prev) => ({ ...prev, export: null }));
     }
@@ -116,7 +117,7 @@ const SingleOperatorPage = () => {
       setSelectedNewStatus("");
     } catch (error) {
       console.error("Error updating report status:", error);
-      alert("Failed to update report status");
+      toast.error("Failed to update report status");
     } finally {
       setLoadingReports((prev) => ({ ...prev, updateStatus: null }));
     }

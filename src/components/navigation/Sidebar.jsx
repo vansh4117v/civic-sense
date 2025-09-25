@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, FileText, Users, Building2, Settings, Clock } from "lucide-react";
+import { Home, FileText, Users, Building2, Settings, Clock, Shield, Wrench } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -39,6 +39,40 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   const navigation = getNavigationItems();
+
+  // Get role display info
+  const getRoleInfo = (role) => {
+    const roleConfig = {
+      admin: {
+        label: "Administrator View",
+        icon: Shield,
+        bgColor: "bg-purple-50",
+        textColor: "text-purple-800",
+        iconColor: "text-purple-600",
+        borderColor: "border-purple-200",
+      },
+      departmentHead: {
+        label: "Department Head View",
+        icon: Users,
+        bgColor: "bg-blue-50",
+        textColor: "text-blue-800",
+        iconColor: "text-blue-600",
+        borderColor: "border-blue-200",
+      },
+      operator: {
+        label: "Operator View",
+        icon: Wrench,
+        bgColor: "bg-green-50",
+        textColor: "text-green-800",
+        iconColor: "text-green-600",
+        borderColor: "border-green-200",
+      },
+    };
+    return roleConfig[role] || roleConfig.operator;
+  };
+
+  const roleInfo = getRoleInfo(user?.role);
+  const RoleIcon = roleInfo.icon;
 
   return (
     <>
@@ -82,7 +116,35 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 overflow-y-auto">
+          <nav className="flex-1 px-4 py-4 overflow-y-auto">
+            {/* Role Indicator */}
+            {user && (
+              <div
+                className={`mb-6 p-4 rounded-lg border ${roleInfo.bgColor} ${roleInfo.borderColor}`}
+              >
+                <div className="flex items-center space-x-3">
+                  <div
+                    className={`p-2 rounded-lg ${roleInfo.bgColor} border ${roleInfo.borderColor}`}
+                  >
+                    <RoleIcon className={`h-5 w-5 ${roleInfo.iconColor}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-semibold ${roleInfo.textColor} truncate`}>
+                      {roleInfo.label}
+                    </p>
+                  </div>
+                </div>
+                {user.department && (
+                  <div className="mt-2 pt-2 border-t border-gray-200">
+                    <p className="text-xs text-gray-600">
+                      Department: <span className="font-medium">{user.department}</span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Navigation Menu */}
             <ul className="space-y-2">
               {navigation.map((item) => (
                 <li key={item.name}>

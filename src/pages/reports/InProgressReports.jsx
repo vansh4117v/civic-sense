@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -88,14 +89,14 @@ const InProgressReports = () => {
 
   const handleUpdateStatusSubmit = async () => {
     if (!selectedNewStatus || !selectedReport) {
-      alert("Please select a status");
+      toast.warning("Please select a status");
       return;
     }
 
     setLoadingReports((prev) => ({ ...prev, updateStatus: selectedReport.id }));
     try {
       await updateReportStatus(selectedReport.id, selectedNewStatus);
-      alert(`Report ${selectedReport.id} status updated to ${selectedNewStatus}`);
+      toast.success(`Report ${selectedReport.id} status updated to ${selectedNewStatus}`);
 
       // Refresh the reports list
       await loadReports();
@@ -104,7 +105,7 @@ const InProgressReports = () => {
       setShowUpdateStatusModal(false);
     } catch (error) {
       console.error("Error updating report status:", error);
-      alert("Failed to update report status");
+      toast.error("Failed to update report status");
     } finally {
       setLoadingReports((prev) => ({ ...prev, updateStatus: null }));
     }

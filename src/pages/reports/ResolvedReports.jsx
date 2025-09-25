@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
+import { toast } from "sonner";
 import { useAuth } from "../../hooks/useAuth";
 import {
   getResolvedReports,
@@ -133,7 +134,7 @@ const ResolvedReports = () => {
       await exportReportData(report.id, "pdf");
     } catch (error) {
       console.error("Error exporting report:", error);
-      alert("Failed to export report");
+      toast.error("Failed to export report");
     } finally {
       setLoadingReports((prev) => ({ ...prev, export: null }));
     }
@@ -147,14 +148,14 @@ const ResolvedReports = () => {
 
   const handleUpdateStatusSubmit = async () => {
     if (!selectedNewStatus || !selectedReport) {
-      alert("Please select a status");
+      toast.warning("Please select a status");
       return;
     }
 
     setLoadingReports((prev) => ({ ...prev, updateStatus: selectedReport.id }));
     try {
       await updateReportStatus(selectedReport.id, selectedNewStatus);
-      alert(`Report ${selectedReport.id} status updated to ${selectedNewStatus}`);
+      toast.success(`Report ${selectedReport.id} status updated to ${selectedNewStatus}`);
 
       // Refresh the reports list
       await fetchReports();
@@ -163,7 +164,7 @@ const ResolvedReports = () => {
       setModals((prev) => ({ ...prev, updateStatus: { open: false } }));
     } catch (error) {
       console.error("Error updating report status:", error);
-      alert("Failed to update report status");
+      toast.error("Failed to update report status");
     } finally {
       setLoadingReports((prev) => ({ ...prev, updateStatus: null }));
     }

@@ -16,6 +16,7 @@ import SettingsPage from "./pages/Settings";
 import NotificationsPage from "./pages/Notifications";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./hooks/useAuth";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
   const { isAuthenticated, loading } = useAuth();
@@ -64,6 +65,7 @@ function App() {
           <Route path="/notifications" element={<NotificationsPage />} />
         </Route>
       </Routes>
+      <Toaster />
     </Router>
   );
 }

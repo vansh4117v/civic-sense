@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
+import { toast } from "sonner";
 import { useAuth } from "../../hooks/useAuth";
 import {
   getPendingReports,
@@ -85,7 +86,7 @@ const PendingReports = () => {
   };
 
   const filteredReports = reports.filter((report) => {
-    console.log("🚀 ~ PendingReports ~ report:", report)
+    console.log("🚀 ~ PendingReports ~ report:", report);
     const matchesSearch =
       report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -116,7 +117,7 @@ const PendingReports = () => {
 
   const handleAssignSubmit = async () => {
     if (!selectedOperator) {
-      alert("Please select an operator");
+      toast.warning("Please select an operator");
       return;
     }
 
@@ -130,7 +131,9 @@ const PendingReports = () => {
       }
 
       await assignReport(selectedReport.id, departmentId, selectedOperator.id);
-      alert(`Report ${selectedReport.id} assigned successfully to ${selectedOperator.name}`);
+      toast.success(
+        `Report ${selectedReport.id} assigned successfully to ${selectedOperator.name}`
+      );
 
       // Refresh the reports list
       await fetchReports();
@@ -139,7 +142,7 @@ const PendingReports = () => {
       setModals((prev) => ({ ...prev, assign: { open: false } }));
     } catch (error) {
       console.error("Error assigning report:", error);
-      alert(`Failed to assign report: ${error.message}`);
+      toast.error(`Failed to assign report: ${error.message}`);
     } finally {
       setLoadingReports((prev) => ({ ...prev, assign: null }));
     }
@@ -158,14 +161,14 @@ const PendingReports = () => {
 
   const handleUpdateStatusSubmit = async () => {
     if (!selectedNewStatus || !selectedReport) {
-      alert("Please select a status");
+      toast.warning("Please select a status");
       return;
     }
 
     setLoadingReports((prev) => ({ ...prev, updateStatus: selectedReport.id }));
     try {
       await updateReportStatus(selectedReport.id, selectedNewStatus);
-      alert(`Report ${selectedReport.id} status updated to ${selectedNewStatus}`);
+      toast.success(`Report ${selectedReport.id} status updated to ${selectedNewStatus}`);
 
       // Refresh the reports list
       await fetchReports();
@@ -174,7 +177,7 @@ const PendingReports = () => {
       setModals((prev) => ({ ...prev, updateStatus: { open: false } }));
     } catch (error) {
       console.error("Error updating report status:", error);
-      alert("Failed to update report status");
+      toast.error("Failed to update report status");
     } finally {
       setLoadingReports((prev) => ({ ...prev, updateStatus: null }));
     }
@@ -379,7 +382,7 @@ const PendingReports = () => {
                   Title
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  	Date Reported
+                  Date Reported
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Priority
@@ -455,7 +458,7 @@ const PendingReports = () => {
                             {loadingReports.assign === report.id ? "Loading..." : "Assign"}
                           </Button>
                         )}
-                        {report.assignedTo && user?.role === "departmentHead" &&  (
+                        {report.assignedTo && user?.role === "departmentHead" && (
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             ✓ Assigned to {report.assignedTo}
                           </span>
@@ -466,7 +469,6 @@ const PendingReports = () => {
                           onClick={() => handleViewClick(report)}
                           disabled={loadingReports.details === report.id}
                           className="text-xs px-2.5 py-1.5 h-7 whitespace-nowrap"
-
                         >
                           {loadingReports.details === report.id ? "Loading..." : "View Details"}
                         </Button>
@@ -476,7 +478,6 @@ const PendingReports = () => {
                           onClick={() => handleUpdateStatusClick(report)}
                           disabled={loadingReports.updateStatus === report.id}
                           className="text-xs px-2.5 py-1.5 h-7 whitespace-nowrap"
-
                         >
                           {loadingReports.updateStatus === report.id
                             ? "Updating..."
@@ -571,11 +572,11 @@ const PendingReports = () => {
                         <div className="text-xs text-gray-500">
                           Workload: {operator.workload || 0} reports
                         </div>
-                        {operator.completedReports && (
+                        {/* {operator.completedReports && (
                           <div className="text-xs text-gray-500">
                             Completed: {operator.completedReports}
                           </div>
-                        )}
+                        )} */}
                       </div>
                     </div>
                     {selectedOperator?.id === operator.id && (

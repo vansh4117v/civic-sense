@@ -1,12 +1,12 @@
 // Helper function to validate token (basic JWT validation)
 const isTokenValid = (token) => {
   if (!token) return false;
-  
+
   try {
     // Split JWT token to get payload
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = JSON.parse(atob(token.split(".")[1]));
     const currentTime = Math.floor(Date.now() / 1000);
-    
+
     // Check if token is expired
     return payload.exp && payload.exp > currentTime;
   } catch {
@@ -19,28 +19,28 @@ const isTokenValid = (token) => {
 const getValidToken = () => {
   const sessionToken = sessionStorage.getItem("civicflow_token");
   const localToken = localStorage.getItem("civicflow_token");
-  
+
   // Priority 1: Valid session token (current session takes precedence)
   if (sessionToken && isTokenValid(sessionToken)) {
     return sessionToken;
   }
-  
+
   // Priority 2: Valid local token (persistent login)
   if (localToken && isTokenValid(localToken)) {
     return localToken;
   }
-  
+
   // If no valid tokens, clean up invalid ones
   if (sessionToken && !isTokenValid(sessionToken)) {
     sessionStorage.removeItem("civicflow_token");
     sessionStorage.removeItem("civicflow_user");
   }
-  
+
   if (localToken && !isTokenValid(localToken)) {
     localStorage.removeItem("civicflow_token");
     localStorage.removeItem("civicflow_user");
   }
-  
+
   return null;
 };
 
@@ -294,21 +294,21 @@ export const logout = async () => {
 export const getCurrentUser = () => {
   const validToken = getValidToken();
   if (!validToken) return null;
-  
+
   // Get user data from the same storage that has the valid token
   const sessionUser = sessionStorage.getItem("civicflow_user");
   const localUser = localStorage.getItem("civicflow_user");
-  
+
   // Check session storage first (current session priority)
   if (sessionStorage.getItem("civicflow_token") === validToken && sessionUser) {
     return JSON.parse(sessionUser);
   }
-  
+
   // Check local storage
   if (localStorage.getItem("civicflow_token") === validToken && localUser) {
     return JSON.parse(localUser);
   }
-  
+
   return null;
 };
 
@@ -765,12 +765,12 @@ export const exportReportData = async (reportId, format = "pdf") => {
     // Step 2: Create download link and trigger automatic download
     const downloadUrl = `https://civic-issue-backend-oju3.onrender.com${exportResponse.downloadUrl}`;
     const token = getValidToken();
-    
+
     // Create a temporary link element to trigger download
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = downloadUrl;
     link.download = exportResponse.fileName;
-    
+
     // Add authorization header by fetching the file and creating blob URL
     const response = await fetch(downloadUrl, {
       headers: {
@@ -784,11 +784,11 @@ export const exportReportData = async (reportId, format = "pdf") => {
 
     const blob = await response.blob();
     const blobUrl = URL.createObjectURL(blob);
-    
+
     link.href = blobUrl;
     document.body.appendChild(link);
     link.click();
-    
+
     // Clean up
     document.body.removeChild(link);
     URL.revokeObjectURL(blobUrl);
@@ -799,7 +799,6 @@ export const exportReportData = async (reportId, format = "pdf") => {
       message: `Report exported successfully as ${format.toUpperCase()}`,
       downloadUrl: exportResponse.downloadUrl,
     };
-    
   } catch (error) {
     console.error("Error exporting report:", error);
     throw new Error(error.message || `Failed to export report as ${format.toUpperCase()}`);
@@ -820,8 +819,8 @@ export const getReportDetails = async (reportId) => {
     let photoUrl = null;
     let voiceUrl = null;
     if (data.attachments && Array.isArray(data.attachments)) {
-      const photoAttachment = data.attachments.find(att => att.type === 'image');
-      const voiceAttachment = data.attachments.find(att => att.type === 'audio');
+      const photoAttachment = data.attachments.find((att) => att.type === "image");
+      const voiceAttachment = data.attachments.find((att) => att.type === "audio");
       photoUrl = photoAttachment?.url || null;
       voiceUrl = voiceAttachment?.url || null;
     }
