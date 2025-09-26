@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Search, Filter, MoreVertical } from "lucide-react";
-import { getInProgressReports, updateReportStatus, getDepartments } from "../../services/api";
+import {
+  getInProgressReports,
+  updateReportStatus,
+  getDepartments,
+  getReportDetails,
+} from "../../services/api";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../../components/ui/button";
 import {
@@ -20,6 +25,7 @@ import {
   DialogTitle,
 } from "../../components/ui/dialog";
 import ReportDetailsModal from "../../components/reports/ReportDetailsModal";
+import { smartMerge } from "../../utils/merge";
 
 const InProgressReports = () => {
   // Core data states
@@ -77,8 +83,17 @@ const InProgressReports = () => {
   };
 
   const handleViewDetails = async (report) => {
-    setSelectedReport(report);
-    setShowDetailsModal(true);
+    setLoadingReports((prev) => ({ ...prev, details: report.id }));
+    try {
+      const detailedReport = await getReportDetails(report.id);
+      setSelectedReport(smartMerge(report, detailedReport));
+      setShowDetailsModal(true);
+    } catch (error) {
+      console.error("Error fetching report details:", error);
+      toast.error("Failed to load report details");
+    } finally {
+      setLoadingReports((prev) => ({ ...prev, details: null }));
+    }
   };
 
   const handleUpdateStatus = (report) => {

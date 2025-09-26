@@ -8,6 +8,7 @@ import {
   getDepartments,
   updateReportStatus,
   getDepartmentOperators,
+  getReportDetails,
 } from "../../services/api";
 import { Button } from "../../components/ui/button";
 import {
@@ -27,6 +28,7 @@ import {
 } from "../../components/ui/dialog";
 import ReportDetailsModal from "../../components/reports/ReportDetailsModal";
 import { formatDate, formatDateTime } from "../../utils/date";
+import { smartMerge } from "../../utils/merge";
 
 const PendingReports = () => {
   const { user } = useAuth();
@@ -148,8 +150,17 @@ const PendingReports = () => {
   };
 
   const handleViewClick = async (report) => {
-    setSelectedReport(report);
-    setModals((prev) => ({ ...prev, details: { open: true } }));
+    setLoadingReports((prev) => ({ ...prev, details: report.id }));
+    try {
+      const detailedReport = await getReportDetails(report.id);
+      setSelectedReport(smartMerge(report, detailedReport));
+      setModals((prev) => ({ ...prev, details: { open: true } }));
+    } catch (error) {
+      console.error("Error fetching report details:", error);
+      toast.error("Failed to load report details");
+    } finally {
+      setLoadingReports((prev) => ({ ...prev, details: null }));
+    }
   };
 
   const handleUpdateStatusClick = (report) => {

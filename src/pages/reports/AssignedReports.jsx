@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
-import { getAssignedReports, updateReportStatus } from "../../services/api";
+import { getAssignedReports, getReportDetails, updateReportStatus } from "../../services/api";
 import { Button } from "../../components/ui/button";
 import {
   Select,
@@ -19,6 +19,7 @@ import {
 } from "../../components/ui/dialog";
 import { toast } from "sonner";
 import ReportDetailsModal from "../../components/reports/ReportDetailsModal";
+import { smartMerge } from "@/utils/merge";
 
 const AssignedReports = () => {
   // Core data states
@@ -69,8 +70,18 @@ const AssignedReports = () => {
   });
 
   const handleViewDetails = async (report) => {
-    setSelectedReport(report);
-    setShowDetailsModal(true);
+    // Fetch full details from backend before opening modal
+    setLoadingReports((prev) => ({ ...prev, details: report.id }));
+    try {
+      const detailedReport = await getReportDetails(report.id);
+      setSelectedReport(smartMerge(report, detailedReport));
+      setShowDetailsModal(true);
+    } catch (error) {
+      console.error("Failed to load report details:", error);
+      toast.error("Failed to load report details");
+    } finally {
+      setLoadingReports((prev) => ({ ...prev, details: null }));
+    }
   };
 
   const handleUpdateStatusClick = (report) => {

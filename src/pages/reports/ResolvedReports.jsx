@@ -7,6 +7,7 @@ import {
   exportReportData,
   getDepartments,
   updateReportStatus,
+  getReportDetails,
 } from "../../services/api";
 import { formatDate } from "../../utils/date";
 import { Button } from "../../components/ui/button";
@@ -26,6 +27,7 @@ import {
   DialogTitle,
 } from "../../components/ui/dialog";
 import ReportDetailsModal from "../../components/reports/ReportDetailsModal";
+import { smartMerge } from "../../utils/merge";
 
 const ResolvedReports = () => {
   const { user } = useAuth();
@@ -124,8 +126,16 @@ const ResolvedReports = () => {
   });
 
   const handleViewDetails = async (report) => {
-    setSelectedReport(report);
-    setModals((prev) => ({ ...prev, details: { open: true, loading: false } }));
+    setModals((prev) => ({ ...prev, details: { open: true, loading: true } }));
+    try {
+      const detailedReport = await getReportDetails(report.id);
+      setSelectedReport(smartMerge(report, detailedReport));
+      setModals((prev) => ({ ...prev, details: { open: true, loading: false } }));
+    } catch (error) {
+      console.error("Error fetching report details:", error);
+      toast.error("Failed to load report details");
+      setModals((prev) => ({ ...prev, details: { open: false, loading: false } }));
+    }
   };
 
   const handleExport = async (report) => {
