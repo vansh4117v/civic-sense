@@ -63,7 +63,6 @@ const SingleDepartmentPage = () => {
 
         setReportsLoading(true);
         const reportsData = await getDepartmentReports(departmentId);
-        console.log("🚀 ~ fetchData ~ reportsData:", reportsData);
         setReports(reportsData);
       } catch (error) {
         console.error("Error fetching department data:", error);

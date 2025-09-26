@@ -54,7 +54,6 @@ const OperatorsPage = () => {
     const fetchOperators = async () => {
       try {
         setLoading(true);
-        // console.log("🚀 ~ fetchOperators ~ user:", user)
         if (user?.role === "departmentHead" && user?.departmentId) {
           const operatorsData = await getDepartmentOperators(user.departmentId);
           setOperators(operatorsData);

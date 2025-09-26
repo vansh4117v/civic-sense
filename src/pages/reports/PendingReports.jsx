@@ -86,7 +86,6 @@ const PendingReports = () => {
   };
 
   const filteredReports = reports.filter((report) => {
-    console.log("🚀 ~ PendingReports ~ report:", report);
     const matchesSearch =
       report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||

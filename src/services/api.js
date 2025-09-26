@@ -433,7 +433,6 @@ export const createDepartment = async (departmentData) => {
 // ============ OPERATOR FUNCTIONS ============
 
 export const getDepartmentOperators = async (departmentId) => {
-  console.log("🚀 ~ getDepartmentOperators ~ departmentId:", departmentId);
   try {
     const operators = await apiCall(`/admin/departments/${departmentId}/operators`);
     return operators.map(mapBackendOperator);
@@ -464,7 +463,6 @@ export const getOperatorReports = async (operatorId) => {
 };
 
 export const createOperator = async (operatorData) => {
-  console.log("🚀 ~ createOperator ~ operatorData:", operatorData);
   try {
     // Map frontend field names to backend expected field names
     const backendOperatorData = {

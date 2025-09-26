@@ -4,7 +4,6 @@ import { Button } from "../ui/button";
 import { Calendar, MapPin, Building, User, Clock, AlertTriangle } from "lucide-react";
 
 const ReportDetailsModal = ({ open, onOpenChange, report }) => {
-  console.log("🚀 ~ ReportDetailsModal ~ report:", report);
 
   if (!report) {
     return (
